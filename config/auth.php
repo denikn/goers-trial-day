@@ -15,6 +15,7 @@ return [
 
     'defaults' => [
         'guard' => env('AUTH_GUARD', 'api'),
+		'passwords' => 'users',
     ],
 
     /*
@@ -35,7 +36,10 @@ return [
     */
 
     'guards' => [
-        'api' => ['driver' => 'api'],
+        'api' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
+        ],
     ],
 
     /*
@@ -56,7 +60,10 @@ return [
     */
 
     'providers' => [
-        //
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Auth\User::class,
+        ],
     ],
 
     /*
@@ -79,7 +86,11 @@ return [
     */
 
     'passwords' => [
-        //
+        'users' => [
+            'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 120,
+        ],
     ],
 
 ];
