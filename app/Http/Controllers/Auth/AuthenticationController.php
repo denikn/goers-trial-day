@@ -26,7 +26,7 @@ class AuthenticationController extends BaseController
         $credentials = $request->only(['email', 'password']);
 
         if (! $token = Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['code' => 401, 'message' => 'Unauthorized.', 'token' => []], 401);
         }
         return response()->json(['code' => 200, 'message' => 'Success.', 'token' => ['type' => 'Bearer ', 'key' => $token]], 200);
     }
