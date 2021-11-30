@@ -141,7 +141,21 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        //
+        $event = $this->event->with(['session', 'organization', 'ticket'])->find($id);
+
+		if ($event) {
+			return response()->json([
+				'code' => 200,
+				'message' => 'Success.',
+				'data' => $event
+			], 200);
+		} else {
+			return response()->json([
+				'code' => 400,
+				'message' => 'Not found.',
+				'data' => []
+			], 400);
+		}
     }
 
     /**
