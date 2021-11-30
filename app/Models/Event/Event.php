@@ -18,4 +18,19 @@ class Event extends Model
 		'interests',
 		'group'
     ];
+
+	public function organization()
+    {
+        return $this->belongsTo('App\Models\Event\Organization', 'organization_id', 'id');
+    }
+
+	public function session()
+    {
+        return $this->hasMany('App\Models\Event\EventSession', 'event_id', 'id');
+    }
+
+	public function ticket()
+    {
+        return $this->hasMany('App\Models\Event\Ticket', 'event_id', 'id');
+    }
 }

@@ -25,4 +25,9 @@ $router->group(['prefix' => 'api'], function () use ($router)
 		//$router->post('register', 'AuthController@register');
 		$router->post('login', 'AuthenticationController@login');
 	});
+
+	$router->group(['namespace' => 'Event'], function () use ($router)
+	{
+		$router->get('event', 'EventController@index');
+	});
 });

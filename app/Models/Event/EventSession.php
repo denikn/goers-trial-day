@@ -4,14 +4,16 @@ namespace App\Models\Event;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Organization extends Model
+class EventSession extends Model
 {
     protected $fillable = [
-        'name',
+        'event_id',
+		'start',
+		'end'
     ];
 
 	public function event()
     {
-        return $this->hasMany('App\Models\Event\Event', 'id', 'organization_id');
+        return $this->belongsTo('App\Models\Event\Event', 'event_id', 'id');
     }
 }

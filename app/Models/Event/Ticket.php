@@ -9,11 +9,17 @@ class Ticket extends Model
     protected $fillable = [
 		'event_id',
 		'name',
-		'datetime',
+		'event_session_ids',
+		'selling_period',
 		'price',
 		'qty',
 		'max_per_person',
 		'package_details',
 		'group'
     ];
+
+	public function event()
+    {
+        return $this->belongsTo('App\Models\Event\Event', 'id', 'event_id');
+    }
 }

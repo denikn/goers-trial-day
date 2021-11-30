@@ -23,7 +23,8 @@ class TicketsTableSeeder extends Seeder
             [
                 'event_id' => 1,
                 'name' => 'Saintek A : 4-5 desember 2021 (2 days)',
-				'datetime' => '[["2021-11-29 10:15:00", "2021-11-29 15:15:00"], ["2021-11-30 10:15:00", "2021-11-30 15:15:00"]]',
+				'event_session_ids' => '[1, 2]',
+				'selling_period' => '["2021-11-29 10:15:00", "2021-12-29 15:15:00"]',
 				'price' => 33000,
 				'qty' => 100,
 				'max_per_person' => 10,
@@ -33,7 +34,8 @@ class TicketsTableSeeder extends Seeder
 			[
                 'event_id' => 1,
                 'name' => 'Saintek B : 4-5 desember 2021 (2 days)',
-				'datetime' => '[["2021-11-29 10:15:00", "2021-11-29 15:15:00"], ["2021-11-30 10:15:00", "2021-11-30 15:15:00"]]',
+				'event_session_ids' => '[1, 2]',
+				'selling_period' => '["2021-11-29 10:15:00", "2021-12-29 15:15:00"]',
 				'price' => 33000,
 				'qty' => 100,
 				'max_per_person' => 10,
@@ -43,7 +45,8 @@ class TicketsTableSeeder extends Seeder
 			[
                 'event_id' => 2,
                 'name' => '[ONLINE] Amba Sesi 1 Presale 3',
-				'datetime' => '[["2021-12-20 10:15:00", "2021-12-20 15:15:00"]]',
+				'event_session_ids' => '[3]',
+				'selling_period' => '["2021-11-29 10:15:00", "2021-12-29 15:15:00"]',
 				'price' => 75000,
 				'qty' => 150,
 				'max_per_person' => 10,
@@ -53,7 +56,8 @@ class TicketsTableSeeder extends Seeder
 			[
                 'event_id' => 2,
                 'name' => '[ONLINE] Amba Sesi 2 Presale 3',
-				'datetime' => '[["2021-12-20 15:15:00", "2021-12-20 17:15:00"]]',
+				'event_session_ids' => '[3]',
+				'selling_period' => '["2021-11-29 10:15:00", "2021-12-29 15:15:00"]',
 				'price' => 75000,
 				'qty' => 150,
 				'max_per_person' => 10,
@@ -63,7 +67,8 @@ class TicketsTableSeeder extends Seeder
 			[
                 'event_id' => 2,
                 'name' => '[ONSITE] Bhisma (Reguler) Sesi 1 Presale 3',
-				'datetime' => '[["2021-12-20 15:15:00", "2021-12-20 17:15:00"]]',
+				'event_session_ids' => '[3]',
+				'selling_period' => '["2021-11-29 10:15:00", "2021-12-29 15:15:00"]',
 				'price' => 80000,
 				'qty' => 50,
 				'max_per_person' => 2,
@@ -76,7 +81,8 @@ class TicketsTableSeeder extends Seeder
             $data = Ticket::create([
                 'event_id' => $q['event_id'],
 				'name' => $q['name'],
-				'datetime' => $q['datetime'],
+				'event_session_ids' => $q['event_session_ids'],
+				'selling_period' => $q['selling_period'],
 				'price' => $q['price'],
 				'qty' => $q['qty'],
 				'max_per_person' => $q['max_per_person'],
