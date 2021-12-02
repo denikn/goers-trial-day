@@ -29,6 +29,8 @@ $router->group(['prefix' => 'api'], function () use ($router)
 	$router->group(['namespace' => 'Event'], function () use ($router)
 	{
 		$router->get('event', 'EventController@index');
-		$router->get('event/{id}', 'EventController@show');
+		$router->get('event/{event_id}', 'EventController@show');
+		$router->get('event/{event_id}/ticket', 'TicketController@index');
+		$router->get('event/{event_id}/ticket/{ticket_id}', 'TicketController@show');
 	});
 });

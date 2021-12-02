@@ -20,6 +20,6 @@ class Ticket extends Model
 
 	public function event()
     {
-        return $this->belongsTo('App\Models\Event\Event', 'id', 'event_id');
+        return $this->belongsTo('App\Models\Event\Event', 'event_id', 'id');
     }
 }
