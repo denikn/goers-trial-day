@@ -19,7 +19,7 @@ class CreatePaymentsTable extends Migration
 			$table->integer('subtotal');
 			$table->foreignId('payment_method_id')->constrained('payment_methods')->onUpdate('cascade')->onDelete('cascade');
 			$table->string('voucher')->nullable();
-			$table->integer('discount');
+			$table->integer('discount')->default(0);
 			$table->integer('total');
             $table->timestamps();
         });
