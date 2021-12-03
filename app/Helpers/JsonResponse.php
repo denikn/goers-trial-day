@@ -96,4 +96,13 @@ class JsonResponse
 			'data' => $data
 		], 201);
 	}
+
+	public static function preconditionFailedResponse($th)
+	{
+		return response()->json([
+			'code' => 412,
+			'message' => 'Precondition failed.',
+			'data' => $th
+		], 412);
+	}
 }

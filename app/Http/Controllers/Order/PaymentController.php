@@ -77,6 +77,30 @@ class PaymentController extends Controller
 		return JsonResponse::createdResponse($payment);
     }
 
+	public function paymentValidation(Request $request)
+	{
+		$this->validate($request, [
+			'type' => 'required',
+			'card_number' => 'required'
+        ]);
+
+		try {
+			switch($request->type)
+			{
+				case 'MasterCard' : $card = (new \LVR\CreditCard\Cards\MasterCard);
+				break;
+				case 'Visa' : $card = (new \LVR\CreditCard\Cards\Visa);
+				break;
+			}
+
+			$isValid = $card->setCardNumber($request->card_number)->isValidCardNumber();
+
+			return JsonResponse::gotResponse(json_encode($request->all()));
+		} catch (\Throwable $th) {
+            return JsonResponse::preconditionFailedResponse($th);
+        }
+	}
+
     /**
      * Display the specified resource.
      *

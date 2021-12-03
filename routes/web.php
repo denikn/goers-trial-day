@@ -40,6 +40,8 @@ $router->group(['prefix' => 'api'], function () use ($router)
 		$router->get('checkout/{checkout_id}', 'CheckoutController@show');
 		$router->post('payment', 'PaymentController@store');
 
+		$router->post('validation', 'PaymentController@paymentValidation');
+
 		$router->get('sub-total/{checkout_id}', 'PaymentController@countSubTotal');
 	});
 });
