@@ -3,6 +3,7 @@
 namespace App\Models\Order;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\ConstantHelper;
 
 class Checkout extends Model
 {
@@ -20,5 +21,10 @@ class Checkout extends Model
     {
         return $this->hasMany('App\Models\Order\CheckoutDetail', 'checkout_id', 'id');
     }
+
+	public function getGenderAttribute()
+	{
+		return ConstantHelper::gender($this->attributes['gender']);
+	}
 
 }

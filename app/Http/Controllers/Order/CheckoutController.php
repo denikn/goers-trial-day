@@ -6,7 +6,6 @@ use Laravel\Lumen\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Helpers\JsonResponse;
 use App\Helpers\GeneratorHelper;
-use App\Helpers\ConstantHelper;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use App\Models\Event\Ticket;
@@ -120,7 +119,6 @@ class CheckoutController extends Controller
     public function show($checkout_id)
     {
         $checkout = Checkout::with('detail.ticket')->where('id', $checkout_id)->first();
-		$checkout['gender'] = ConstantHelper::gender($checkout->gender);
 
 		return JsonResponse::gotResponse($checkout);
     }
