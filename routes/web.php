@@ -42,6 +42,6 @@ $router->group(['prefix' => 'api'], function () use ($router)
 
 		$router->post('validation', 'PaymentController@paymentValidation');
 
-		$router->get('sub-total/{checkout_id}', 'PaymentController@countSubTotal');
+		$router->get('sub-total/{checkout_id}', 'PaymentController@decreaseTicketQty');
 	});
 });

@@ -9,14 +9,16 @@ use App\Helpers\GeneratorHelper;
 use App\Helpers\ConstantHelper;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use App\Models\Event\Ticket;
 use App\Models\Order\Checkout;
 use App\Models\Order\CheckoutDetail;
 use Carbon\Carbon;
 
 class CheckoutController extends Controller
 {
-	function __construct(Checkout $checkout, CheckoutDetail $checkoutDetail)
+	function __construct(Checkout $checkout, CheckoutDetail $checkoutDetail, Ticket $ticket)
 	{
+		$this->ticket = $ticket;
         $this->checkout = $checkout;
 		$this->checkoutDetail = $checkoutDetail;
 		$this->genders = Config::get('constants.genders');
@@ -48,6 +50,10 @@ class CheckoutController extends Controller
 			'gender' => 'required',
         ]);
 
+		$checkMaxTicket = $this->checkMaxTicket($request->ticket);
+		if($checkMaxTicket == false)
+			return JsonResponse::preconditionFailedResponse('Ticket that selected is more than qty');
+
 		$input['order_number'] = GeneratorHelper::orderNumber();
 		$input['email'] = $request->email;
 		$input['phone'] = $request->phone;
@@ -73,6 +79,18 @@ class CheckoutController extends Controller
 		}
 
 		return $checkoutDetail;
+	}
+
+	public function checkMaxTicket($ticketDetails)
+	{
+		foreach($ticketDetails as $ticket)
+		{
+			$ticketData = $this->ticket->find($ticket['id']);
+			if($ticket['qty'] > $ticketData->max_per_person)
+				return false;
+		}
+
+		return true;
 	}
 
     /**

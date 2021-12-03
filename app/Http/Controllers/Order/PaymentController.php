@@ -9,16 +9,18 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Order\Payment;
 use App\Models\Order\PaymentMethod;
 use App\Models\Order\Checkout;
+use App\Models\Event\Ticket;
 use App\Http\Controllers\Order\CheckoutController;
 use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
-	function __construct(Payment $payment, PaymentMethod $paymentMethod, Checkout $checkout)
+	function __construct(Payment $payment, PaymentMethod $paymentMethod, Checkout $checkout, Ticket $ticket)
 	{
         $this->payment = $payment;
 		$this->paymentMethod = $paymentMethod;
 		$this->checkout = $checkout;
+		$this->ticket = $ticket;
     }
 
 	public function countSubTotal($checkout_id)
@@ -37,6 +39,19 @@ class PaymentController extends Controller
 	public function getPaymentMethod($payment_method_id)
 	{
 		return $this->paymentMethod->find($payment_method_id);
+	}
+
+	public function decreaseTicketQty($checkout_id)
+	{
+		$checkout = $this->checkout->with('detail')->find($checkout_id);
+
+		foreach($checkout->detail as $data)
+		{
+			$input['qty'] = $data->ticket->qty - $data->qty;
+			$ticket = $this->ticket->findOrFail($data->id)->update($input);
+		}
+
+		return $input;
 	}
 
     /**
@@ -73,6 +88,9 @@ class PaymentController extends Controller
 		$input['total'] = $subTotal +  $paymentMethod->service_fee - $request->discount;
 
         $payment = $this->payment->create($input);
+		// decrease ticket qty
+		if($payment)
+			$decreaseTicketQty = $this->decreaseTicketQty($request->checkout_id);
 
 		return JsonResponse::createdResponse($payment);
     }
