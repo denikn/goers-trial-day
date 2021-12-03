@@ -54,7 +54,7 @@ class TicketController extends Controller
             return $tickets;
         });
 
-		return JsonResponse::httpResponse($tickets);
+		return JsonResponse::gotResponse($tickets);
     }
 
     /**
@@ -82,7 +82,7 @@ class TicketController extends Controller
 			$ticket['event_session_ids'] = $this->eventSession($ticket->event_session_ids);
 		}
 
-		return JsonResponse::httpResponse($ticket);
+		return JsonResponse::gotResponse($ticket);
     }
 
     /**

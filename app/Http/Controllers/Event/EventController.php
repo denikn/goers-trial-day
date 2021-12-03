@@ -133,7 +133,7 @@ class EventController extends Controller
 
 		$events = $events->get();
 
-		return JsonResponse::httpResponse($events);
+		return JsonResponse::gotResponse($events);
     }
 
     /**
@@ -157,7 +157,7 @@ class EventController extends Controller
     {
         $event = $this->event->with(['session', 'organization', 'ticket'])->find($event_id);
 
-		return JsonResponse::httpResponse($event);
+		return JsonResponse::gotResponse($event);
     }
 
     /**

@@ -33,4 +33,9 @@ $router->group(['prefix' => 'api'], function () use ($router)
 		$router->get('event/{event_id}/ticket', 'TicketController@index');
 		$router->get('event/{event_id}/ticket/{ticket_id}', 'TicketController@show');
 	});
+
+	$router->group(['namespace' => 'Order'], function () use ($router)
+	{
+		$router->post('checkout', 'CheckoutController@store');
+	});
 });
