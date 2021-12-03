@@ -8,28 +8,35 @@ use App\Helpers\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order\Payment;
 use App\Models\Order\PaymentMethod;
+use App\Models\Order\Checkout;
 use App\Http\Controllers\Order\CheckoutController;
 use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
-	function __construct(Payment $payment, PaymentMethod $paymentMethod)
+	function __construct(Payment $payment, PaymentMethod $paymentMethod, Checkout $checkout)
 	{
         $this->payment = $payment;
 		$this->paymentMethod = $paymentMethod;
+		$this->checkout = $checkout;
     }
 
 	public function countSubTotal($checkout_id)
 	{
 		$price = 0;
-		$checkout = CheckoutController::show($checkout_id);
+		$checkout = $this->checkout->with('detail')->find($checkout_id);
 
-		foreach($checkout->ticket_ids as $ticket)
+		foreach($checkout->detail as $data)
 		{
-			$price = $price + $ticket->price;
+			$price = $price + ($data->qty * $data->ticket->price);
 		}
 
 		return $price;
+	}
+
+	public function getPaymentMethod($payment_method_id)
+	{
+		return $this->paymentMethod->find($payment_method_id);
 	}
 
     /**
@@ -51,22 +58,19 @@ class PaymentController extends Controller
     public function store(Request $request)
     {
 		$this->validate($request, [
-			'ticket_ids' => 'required',
-			'email' => 'required|email',
-			'phone' => 'required',
-            'first_name' => 'required',
-			'gender' => 'required',
+			'checkout_id' => 'required',
+			'payment_method_id' => 'required'
         ]);
 
-		// get payment method information
-		$paymentMethod = $this->paymentMethod->find($request->payment_method_id);
+		$subTotal = $this->countSubTotal($request->checkout_id);
+		$paymentMethod = $this->getPaymentMethod($request->payment_method_id);
 
 		$input['checkout_id'] = $request->checkout_id;
-		$input['subtotal'] = $request->subtotal;
+		$input['subtotal'] = $subTotal;
 		$input['payment_method_id'] = $request->payment_method_id;
 		$input['voucher'] = $request->voucher;
 		$input['discount'] = $request->discount;
-		$input['total'] = $request->subtotal + $paymentMethod->service_fee - $request->discount;
+		$input['total'] = $subTotal +  $paymentMethod->service_fee - $request->discount;
 
         $payment = $this->payment->create($input);
 
