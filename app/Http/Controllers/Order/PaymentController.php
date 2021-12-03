@@ -62,27 +62,31 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-		$this->validate($request, [
-			'checkout_id' => 'required',
-			'payment_method_id' => 'required'
-        ]);
+		try{
+			$this->validate($request, [
+				'checkout_id' => 'required',
+				'payment_method_id' => 'required'
+			]);
 
-		$subTotal = $this->countSubTotal($request->checkout_id);
-		$paymentMethod = $this->getPaymentMethod($request->payment_method_id);
+			$subTotal = $this->countSubTotal($request->checkout_id);
+			$paymentMethod = $this->getPaymentMethod($request->payment_method_id);
 
-		$input['checkout_id'] = $request->checkout_id;
-		$input['subtotal'] = $subTotal;
-		$input['payment_method_id'] = $request->payment_method_id;
-		$input['voucher'] = $request->voucher;
-		$input['discount'] = $request->discount;
-		$input['total'] = $subTotal +  $paymentMethod->service_fee - $request->discount;
+			$input['checkout_id'] = $request->checkout_id;
+			$input['subtotal'] = $subTotal;
+			$input['payment_method_id'] = $request->payment_method_id;
+			$input['voucher'] = $request->voucher;
+			$input['discount'] = $request->discount;
+			$input['total'] = $subTotal +  $paymentMethod->service_fee - $request->discount;
 
-        $payment = $this->payment->create($input);
-		// decrease ticket qty
-		if($payment)
-			$decreaseTicketQty = $this->decreaseTicketQty($request->checkout_id);
+			$payment = $this->payment->create($input);
+			// decrease ticket qty
+			if($payment)
+				$decreaseTicketQty = $this->decreaseTicketQty($request->checkout_id);
 
-		return JsonResponse::createdResponse($payment);
+			return JsonResponse::createdResponse($payment);
+		} catch (\Throwable $th) {
+            return JsonResponse::preconditionFailedResponse($th);
+        }
     }
 
 	public function paymentValidation(Request $request)

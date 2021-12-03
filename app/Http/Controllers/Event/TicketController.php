@@ -25,9 +25,13 @@ class TicketController extends Controller
      */
     public function index($event_id)
     {
-        $tickets = $this->ticket->with(['event'])->where('event_id', $event_id)->get();
+		try {
+			$tickets = $this->ticket->with(['event'])->where('event_id', $event_id)->get();
 
-		return JsonResponse::gotResponse($tickets);
+			return JsonResponse::gotResponse($tickets);
+		} catch (\Throwable $th) {
+            return JsonResponse::preconditionFailedResponse($th);
+        }
     }
 
     /**
@@ -38,9 +42,13 @@ class TicketController extends Controller
      */
     public function show($event_id, $ticket_id)
     {
-        $ticket = $this->ticket->with(['event'])->where([['event_id', $event_id], ['id', $ticket_id]])->first();
+		try {
+			$ticket = $this->ticket->with(['event'])->where([['event_id', $event_id], ['id', $ticket_id]])->first();
 
-		return JsonResponse::gotResponse($ticket);
+			return JsonResponse::gotResponse($ticket);
+		} catch (\Throwable $th) {
+            return JsonResponse::preconditionFailedResponse($th);
+        }
     }
 
 }

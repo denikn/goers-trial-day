@@ -119,21 +119,25 @@ class EventController extends Controller
      */
     public function index(Request $request)
     {
-        $events = $this->event->query();
-		$events = $events->with(['session', 'organization', 'ticket']);
+		try {
+			$events = $this->event->query();
+			$events = $events->with(['session', 'organization', 'ticket']);
 
-		// applying filter
-		$events = $this->filterByDate($events, $request);
-		$events = $this->filterByTime($events, $request);
-		$events = $this->filterByPrice($events, $request);
-		$events = $this->filterByInterest($events, $request);
+			// applying filter
+			$events = $this->filterByDate($events, $request);
+			$events = $this->filterByTime($events, $request);
+			$events = $this->filterByPrice($events, $request);
+			$events = $this->filterByInterest($events, $request);
 
-		// sorting by condition
-		$events = $this->sortBy($events, $request);
+			// sorting by condition
+			$events = $this->sortBy($events, $request);
 
-		$events = $events->get();
+			$events = $events->get();
 
-		return JsonResponse::gotResponse($events);
+			return JsonResponse::gotResponse($events);
+		} catch (\Throwable $th) {
+            return JsonResponse::preconditionFailedResponse($th);
+        }
     }
 
     /**
@@ -144,9 +148,13 @@ class EventController extends Controller
      */
     public function show($event_id)
     {
-        $event = $this->event->with(['session', 'organization', 'ticket'])->find($event_id);
+		try {
+			$event = $this->event->with(['session', 'organization', 'ticket'])->find($event_id);
 
-		return JsonResponse::gotResponse($event);
+			return JsonResponse::gotResponse($event);
+		} catch (\Throwable $th) {
+            return JsonResponse::preconditionFailedResponse($th);
+        }
     }
 
 }

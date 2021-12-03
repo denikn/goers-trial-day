@@ -39,28 +39,32 @@ class CheckoutController extends Controller
 			'gender' => 'required',
         ]);
 
-		// check maximum qty that can be selected
-		$checkMaxTicket = $this->checkMaxTicket($request->ticket);
-		if($checkMaxTicket == false)
-			return JsonResponse::preconditionFailedResponse('Ticket that selected is more than qty');
+		try {
+			// check maximum qty that can be selected
+			$checkMaxTicket = $this->checkMaxTicket($request->ticket);
+			if($checkMaxTicket == false)
+				return JsonResponse::preconditionFailedResponse('Ticket that selected is more than qty');
 
-		// is ticket sold out?
-		$checkQtyTicket = $this->checkQtyTicket($request->ticket);
-		if($checkQtyTicket == false)
-			return JsonResponse::preconditionFailedResponse('Ticket sold out');
+			// is ticket sold out?
+			$checkQtyTicket = $this->checkQtyTicket($request->ticket);
+			if($checkQtyTicket == false)
+				return JsonResponse::preconditionFailedResponse('Ticket sold out');
 
-		$input['order_number'] = GeneratorHelper::orderNumber();
-		$input['email'] = $request->email;
-		$input['phone'] = $request->phone;
-		$input['first_name'] = $request->first_name;
-		$input['last_name'] = $request->last_name;
-		$input['gender'] = $this->genders[$request->gender];
-		$input['expired_at'] = Carbon::now()->addMinutes(30);
+			$input['order_number'] = GeneratorHelper::orderNumber();
+			$input['email'] = $request->email;
+			$input['phone'] = $request->phone;
+			$input['first_name'] = $request->first_name;
+			$input['last_name'] = $request->last_name;
+			$input['gender'] = $this->genders[$request->gender];
+			$input['expired_at'] = Carbon::now()->addMinutes(30);
 
-        $checkout = $this->checkout->create($input);
-		$checkoutDetail = $this->storeCheckoutDetail($checkout->id, $request->ticket);
+			$checkout = $this->checkout->create($input);
+			$checkoutDetail = $this->storeCheckoutDetail($checkout->id, $request->ticket);
 
-		return JsonResponse::createdResponse($checkout);
+			return JsonResponse::createdResponse($checkout);
+		} catch (\Throwable $th) {
+            return JsonResponse::preconditionFailedResponse($th);
+        }
     }
 
 	public function storeCheckoutDetail($checkout_id, $ticketDetails)
@@ -108,9 +112,13 @@ class CheckoutController extends Controller
      */
     public function show($checkout_id)
     {
-        $checkout = Checkout::with('detail.ticket')->where('id', $checkout_id)->first();
+		try {
+			$checkout = Checkout::with('detail.ticket')->where('id', $checkout_id)->first();
 
-		return JsonResponse::gotResponse($checkout);
+			return JsonResponse::gotResponse($checkout);
+		} catch (\Throwable $th) {
+            return JsonResponse::preconditionFailedResponse($th);
+        }
     }
 
 }
