@@ -1,24 +1,73 @@
-# Lumen PHP Framework
+# Goers Trial Day - Backend Engineer
 
 [![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://img.shields.io/packagist/dt/laravel/framework)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://img.shields.io/packagist/v/laravel/framework)](https://packagist.org/packages/laravel/lumen-framework)
 [![License](https://img.shields.io/packagist/l/laravel/framework)](https://packagist.org/packages/laravel/lumen-framework)
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+This repository is a pretest backend engineer Goers. This project contains a web service with a RESTful API type developed using the Lumen Microframework.
 
-## Official Documentation
+```
+   ...    *    .   _  .
+*  .  *     .   * (_)   *
+  .      |*  ..   *   ..
+   .  * \|  *  ___  . . *
+*   \/   |/ \/{o,o}     .
+  _\_\   |  / /)  )* _/_ *
+      \ \| /,--"-"---  ..
+_-----`  |(,__,__/__/_ .
+       \ ||      ..
+        ||| .            *
+        |||
+goers   |||
+  , -=-~' .-^- _
+```
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
+## Requirements
+ - [PHP v7.3+|v8.0+](https://www.php.net/)
+ - [Composer](https://yarnpkg.com/en/docs/install)
+ - [tymon/jwt-auth](https://github.com/tymondesigns/jwt-auth)
+ - [laravel-validation-rules/credit-card](https://github.com/laravel-validation-rules/credit-card)
 
-## Contributing
+## Getting started
+### Clone the repo:
+```bash
+git clone --depth 1 https://github.com/denikn/goers-trial-day
+cd goers-trial-day
+rm -rf .git
+```
 
-Thank you for considering contributing to Lumen! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Set environment variables:
+```bash
+cp .env.example .env
+```
 
-## Security Vulnerabilities
+### Install dependencies:
+```bash
+composer install
+```
 
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+### Database migration and seed:
+```bash
+php artisan migrate
+php artisan db:seed
+```
 
-## License
+### Generate JWT secret:
+```bash
+php artisan jwt:secret
+```
+
+### Running locally:
+```bash
+php -S localhost:8000 -t public
+```
+
+## Documentation
+This documentation uses postman.
+
+<a href="https://documenter.getpostman.com/view/3134681/UVJhCEEP" target="_blank">
+Goers Trial Day RESTful API Documentation
+</a>
+
+## License and Copyright
 
 The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
