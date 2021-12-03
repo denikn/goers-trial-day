@@ -33,7 +33,7 @@ class TicketController extends Controller
 	{
 		foreach(json_decode($event_session_ids) as $event_session_id)
 		{
-			$eventSessionData[] = $this->eventSession->find($event_session_id);
+			$eventSessionData[] = EventSession::find($event_session_id);
 		}
 
 		return $eventSessionData;
@@ -48,7 +48,6 @@ class TicketController extends Controller
     {
         $tickets = $this->ticket->with(['event'])->where('event_id', $event_id)->get();
 		$tickets->map(function ($tickets) use ($event_id) {
-			// decode selling period
 			$tickets['selling_period'] = $this->sellingPeriod($tickets->selling_period);
 			$tickets['event_session_ids'] = $this->eventSession($tickets->event_session_ids);
             return $tickets;

@@ -5,42 +5,16 @@ namespace App\Http\Controllers\Order;
 use Laravel\Lumen\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Helpers\JsonResponse;
-use App\Helpers\GeneratorHelper;
-use App\Helpers\ConstantHelper;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use App\Models\Order\Checkout;
-use App\Models\Event\Ticket;
-use App\Http\Controllers\Event\TicketController;
+use App\Models\Order\Payment;
 use Carbon\Carbon;
 
-class CheckoutController extends Controller
+class PaymentController extends Controller
 {
-	function __construct(Checkout $checkout, Ticket $ticket)
+	function __construct(Payment $payment)
 	{
-        $this->checkout = $checkout;
-		$this->ticket = $ticket;
-		$this->genders = Config::get('constants.genders');
+        $this->payment = $payment;
     }
-
-	public function ticket($ticket_ids)
-	{
-		foreach(json_decode($ticket_ids) as $ticket_id)
-		{
-			$ticketIdData[] = $this->getTicket($ticket_id);
-		}
-
-		return $ticketIdData;
-	}
-
-	public function getTicket($ticket_id)
-	{
-		$ticket = $this->ticket->find($ticket_id);
-		$ticket['selling_period'] = TicketController::sellingPeriod($ticket->selling_period);
-		$ticket['event_session_ids'] = TicketController::eventSession($ticket->event_session_ids);
-
-		return $ticket;
-	}
 
     /**
      * Display a listing of the resource.
@@ -88,15 +62,9 @@ class CheckoutController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($checkout_id)
+    public function show($id)
     {
-        $checkout = $this->checkout->where('id', $checkout_id)->first();
-		$checkout['gender'] = ConstantHelper::gender($checkout->gender);
-
-		if($checkout)
-			$checkout['ticket_ids'] = $this->ticket($checkout->ticket_ids);
-
-		return JsonResponse::gotResponse($checkout);
+        //
     }
 
     /**

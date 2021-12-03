@@ -37,5 +37,6 @@ $router->group(['prefix' => 'api'], function () use ($router)
 	$router->group(['namespace' => 'Order'], function () use ($router)
 	{
 		$router->post('checkout', 'CheckoutController@store');
+		$router->get('checkout/{checkout_id}', 'CheckoutController@show');
 	});
 });
