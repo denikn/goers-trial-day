@@ -68,6 +68,16 @@ This documentation uses postman.
 Goers Trial Day RESTful API Documentation
 </a>
 
+## Assumptions
+```
+1. Assuming the image and avatar already exist
+2. Users make payments using credit or debit cards
+3. Credit or debit cards used are Visa and Master Card
+4. Gender must choose between men and women
+5. There is no voucher or discount, so the discount value is 0
+6. The user has received the information via email
+```
+
 ## License and Copyright
 
 The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
