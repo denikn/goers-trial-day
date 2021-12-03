@@ -50,9 +50,15 @@ class CheckoutController extends Controller
 			'gender' => 'required',
         ]);
 
+		// check maximum qty that can be selected
 		$checkMaxTicket = $this->checkMaxTicket($request->ticket);
 		if($checkMaxTicket == false)
 			return JsonResponse::preconditionFailedResponse('Ticket that selected is more than qty');
+
+		// is ticket sold out?
+		$checkQtyTicket = $this->checkQtyTicket($request->ticket);
+		if($checkQtyTicket == false)
+			return JsonResponse::preconditionFailedResponse('Ticket sold out');
 
 		$input['order_number'] = GeneratorHelper::orderNumber();
 		$input['email'] = $request->email;
@@ -87,6 +93,18 @@ class CheckoutController extends Controller
 		{
 			$ticketData = $this->ticket->find($ticket['id']);
 			if($ticket['qty'] > $ticketData->max_per_person)
+				return false;
+		}
+
+		return true;
+	}
+
+	public function checkQtyTicket($ticketDetails)
+	{
+		foreach($ticketDetails as $ticket)
+		{
+			$ticketData = $this->ticket->find($ticket['id']);
+			if($ticket['qty'] > $ticketData->qty)
 				return false;
 		}
 
