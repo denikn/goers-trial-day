@@ -7,37 +7,16 @@ use Illuminate\Http\Request;
 use App\Helpers\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Models\Event\Ticket;
-use App\Models\Event\EventSession;
 use Carbon\Carbon;
 
 class TicketController extends Controller
 {
 	private $eventSessionData = [];
 
-	function __construct(Ticket $ticket, EventSession $eventSession)
+	function __construct(Ticket $ticket)
 	{
         $this->ticket = $ticket;
-		$this->eventSession = $eventSession;
     }
-
-	public function sellingPeriod($selling_period)
-	{
-		$decodeSellingPeriod = json_decode($selling_period);
-		$sellingPeriod = ['start' => $decodeSellingPeriod[0],
-						  'end' => $decodeSellingPeriod[1]];
-
-		return $sellingPeriod;
-	}
-
-	public function eventSession($event_session_ids)
-	{
-		foreach(json_decode($event_session_ids) as $event_session_id)
-		{
-			$eventSessionData[] = EventSession::find($event_session_id);
-		}
-
-		return $eventSessionData;
-	}
 
     /**
      * Display a listing of the resource.
@@ -47,11 +26,6 @@ class TicketController extends Controller
     public function index($event_id)
     {
         $tickets = $this->ticket->with(['event'])->where('event_id', $event_id)->get();
-		$tickets->map(function ($tickets) use ($event_id) {
-			$tickets['selling_period'] = $this->sellingPeriod($tickets->selling_period);
-			$tickets['event_session_ids'] = $this->eventSession($tickets->event_session_ids);
-            return $tickets;
-        });
 
 		return JsonResponse::gotResponse($tickets);
     }
@@ -76,10 +50,6 @@ class TicketController extends Controller
     public function show($event_id, $ticket_id)
     {
         $ticket = $this->ticket->with(['event'])->where([['event_id', $event_id], ['id', $ticket_id]])->first();
-		if($ticket) {
-			$ticket['selling_period'] = $this->sellingPeriod($ticket->selling_period);
-			$ticket['event_session_ids'] = $this->eventSession($ticket->event_session_ids);
-		}
 
 		return JsonResponse::gotResponse($ticket);
     }

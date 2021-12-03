@@ -7,14 +7,30 @@ use Illuminate\Http\Request;
 use App\Helpers\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order\Payment;
+use App\Models\Order\PaymentMethod;
+use App\Http\Controllers\Order\CheckoutController;
 use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
-	function __construct(Payment $payment)
+	function __construct(Payment $payment, PaymentMethod $paymentMethod)
 	{
         $this->payment = $payment;
+		$this->paymentMethod = $paymentMethod;
     }
+
+	public function countSubTotal($checkout_id)
+	{
+		$price = 0;
+		$checkout = CheckoutController::show($checkout_id);
+
+		foreach($checkout->ticket_ids as $ticket)
+		{
+			$price = $price + $ticket->price;
+		}
+
+		return $price;
+	}
 
     /**
      * Display a listing of the resource.
@@ -42,18 +58,19 @@ class PaymentController extends Controller
 			'gender' => 'required',
         ]);
 
-		$input['order_number'] = GeneratorHelper::orderNumber();
-		$input['ticket_ids'] = json_encode($request->ticket_ids);
-		$input['email'] = $request->email;
-		$input['phone'] = $request->phone;
-		$input['first_name'] = $request->first_name;
-		$input['last_name'] = $request->last_name;
-		$input['gender'] = $this->genders[$request->gender];
-		$input['expired_at'] = Carbon::now()->addMinutes(30);
+		// get payment method information
+		$paymentMethod = $this->paymentMethod->find($request->payment_method_id);
 
-        $checkout = $this->checkout->create($input);
+		$input['checkout_id'] = $request->checkout_id;
+		$input['subtotal'] = $request->subtotal;
+		$input['payment_method_id'] = $request->payment_method_id;
+		$input['voucher'] = $request->voucher;
+		$input['discount'] = $request->discount;
+		$input['total'] = $request->subtotal + $paymentMethod->service_fee - $request->discount;
 
-		return JsonResponse::createdResponse($checkout);
+        $payment = $this->payment->create($input);
+
+		return JsonResponse::createdResponse($payment);
     }
 
     /**

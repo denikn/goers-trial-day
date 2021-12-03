@@ -10,37 +10,17 @@ use App\Helpers\ConstantHelper;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order\Checkout;
-use App\Models\Event\Ticket;
-use App\Http\Controllers\Event\TicketController;
+use App\Models\Order\CheckoutDetail;
 use Carbon\Carbon;
 
 class CheckoutController extends Controller
 {
-	function __construct(Checkout $checkout, Ticket $ticket)
+	function __construct(Checkout $checkout, CheckoutDetail $checkoutDetail)
 	{
         $this->checkout = $checkout;
-		$this->ticket = $ticket;
+		$this->checkoutDetail = $checkoutDetail;
 		$this->genders = Config::get('constants.genders');
     }
-
-	public function ticket($ticket_ids)
-	{
-		foreach(json_decode($ticket_ids) as $ticket_id)
-		{
-			$ticketIdData[] = $this->getTicket($ticket_id);
-		}
-
-		return $ticketIdData;
-	}
-
-	public function getTicket($ticket_id)
-	{
-		$ticket = $this->ticket->find($ticket_id);
-		$ticket['selling_period'] = TicketController::sellingPeriod($ticket->selling_period);
-		$ticket['event_session_ids'] = TicketController::eventSession($ticket->event_session_ids);
-
-		return $ticket;
-	}
 
     /**
      * Display a listing of the resource.
@@ -61,7 +41,7 @@ class CheckoutController extends Controller
     public function store(Request $request)
     {
 		$this->validate($request, [
-			'ticket_ids' => 'required',
+			'ticket' => 'required',
 			'email' => 'required|email',
 			'phone' => 'required',
             'first_name' => 'required',
@@ -69,7 +49,6 @@ class CheckoutController extends Controller
         ]);
 
 		$input['order_number'] = GeneratorHelper::orderNumber();
-		$input['ticket_ids'] = json_encode($request->ticket_ids);
 		$input['email'] = $request->email;
 		$input['phone'] = $request->phone;
 		$input['first_name'] = $request->first_name;
@@ -78,9 +57,23 @@ class CheckoutController extends Controller
 		$input['expired_at'] = Carbon::now()->addMinutes(30);
 
         $checkout = $this->checkout->create($input);
+		$checkoutDetail = $this->storeCheckoutDetail($checkout->id, $request->ticket);
 
 		return JsonResponse::createdResponse($checkout);
     }
+
+	public function storeCheckoutDetail($checkout_id, $ticketDetails)
+	{
+		foreach($ticketDetails as $ticket)
+		{
+			$input['checkout_id'] = $checkout_id;
+			$input['ticket_id'] = $ticket['id'];
+			$input['qty'] = $ticket['qty'];
+			$checkoutDetail = $this->checkoutDetail->create($input);
+		}
+
+		return $checkoutDetail;
+	}
 
     /**
      * Display the specified resource.
@@ -90,11 +83,8 @@ class CheckoutController extends Controller
      */
     public function show($checkout_id)
     {
-        $checkout = $this->checkout->where('id', $checkout_id)->first();
+        $checkout = Checkout::with('detail.ticket')->where('id', $checkout_id)->first();
 		$checkout['gender'] = ConstantHelper::gender($checkout->gender);
-
-		if($checkout)
-			$checkout['ticket_ids'] = $this->ticket($checkout->ticket_ids);
 
 		return JsonResponse::gotResponse($checkout);
     }

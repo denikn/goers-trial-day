@@ -8,7 +8,6 @@ class Checkout extends Model
 {
     protected $fillable = [
         'order_number',
-		'ticket_ids',
 		'email',
 		'phone',
 		'first_name',
@@ -16,5 +15,10 @@ class Checkout extends Model
 		'gender',
 		'expired_at'
     ];
+
+	public function detail()
+    {
+        return $this->hasMany('App\Models\Order\CheckoutDetail', 'checkout_id', 'id');
+    }
 
 }

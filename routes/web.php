@@ -38,5 +38,7 @@ $router->group(['prefix' => 'api'], function () use ($router)
 	{
 		$router->post('checkout', 'CheckoutController@store');
 		$router->get('checkout/{checkout_id}', 'CheckoutController@show');
+
+		$router->get('sub-total/{checkout_id}', 'PaymentController@countSubTotal');
 	});
 });
