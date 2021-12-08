@@ -77,19 +77,19 @@ class EventController extends Controller
 			switch($request->sortBy)
 			{
 				case "PRICE_ASC" :
-					$events = $events->whereHas('ticket', function ($q) use ($request)
+					$events = $events->whereHas('ticket', function ($q)
 					{
 						$q->orderBy('price', 'ASC');
 					});
 					break;
 				case "PRICE_DESC" :
-					$events = $events->whereHas('ticket', function ($q) use ($request)
+					$events = $events->whereHas('ticket', function ($q)
 					{
 						$q->orderBy('price', 'DESC');
 					});
 					break;
 				case "UPCOMING" :
-					$events = $events->whereHas('session', function ($q) use ($request)
+					$events = $events->whereHas('session', function ($q)
 					{
 						$q->whereDate(
 							"start", ">=", Carbon::now()
@@ -97,7 +97,7 @@ class EventController extends Controller
 					});
 					break;
 				case "NEW_IN" :
-					$events = $events->whereHas('session', function ($q) use ($request)
+					$events = $events->whereHas('session', function ($q)
 					{
 						$q->whereDate(
 							"created_at", ">=", Carbon::now()->subDays(7)
