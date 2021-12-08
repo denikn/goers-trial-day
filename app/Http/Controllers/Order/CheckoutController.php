@@ -113,7 +113,7 @@ class CheckoutController extends Controller
     public function show($checkout_id)
     {
 		try {
-			$checkout = Checkout::with('detail.ticket')->where('id', $checkout_id)->first();
+			$checkout = $this->checkout->with('detail.ticket')->where('id', $checkout_id)->first();
 
 			return JsonResponse::gotResponse($checkout);
 		} catch (\Throwable $th) {

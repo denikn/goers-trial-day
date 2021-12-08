@@ -38,6 +38,7 @@ $router->group(['prefix' => 'api'], function () use ($router)
 	{
 		$router->post('checkout', 'CheckoutController@store');
 		$router->get('checkout/{checkout_id}', 'CheckoutController@show');
+		$router->get('xxx/{checkout_id}', 'CheckoutController@checkExpiredCheckout');
 		$router->post('payment', 'PaymentController@store');
 		$router->post('validation', 'PaymentController@paymentValidation');
 	});

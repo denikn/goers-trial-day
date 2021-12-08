@@ -54,6 +54,16 @@ class PaymentController extends Controller
 		return $input;
 	}
 
+	public function checkExpiredCheckout($checkout_id)
+	{
+		$checkout = $this->checkout->with('detail.ticket')->where('id', $checkout_id)->first();
+
+		if(Carbon::now()->lessThanOrEqualTo($checkout->expired_at))
+			return true;
+
+		return false;
+	}
+
     /**
      * Store a newly created resource in storage.
      *
@@ -67,6 +77,11 @@ class PaymentController extends Controller
 				'checkout_id' => 'required',
 				'payment_method_id' => 'required'
 			]);
+
+			// is expired?
+			$checkExpiredCheckout = $this->checkExpiredCheckout($request->checkout_id);
+			if($checkExpiredCheckout == false)
+				return JsonResponse::preconditionFailedResponse('Your checkout data was expired.');
 
 			$subTotal = $this->countSubTotal($request->checkout_id);
 			$paymentMethod = $this->getPaymentMethod($request->payment_method_id);
